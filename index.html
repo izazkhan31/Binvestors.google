@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral System</title>
+</head>
+<body>
+    <h1>Register</h1>
+    <form id="registerForm">
+        <label for="username">Username:</label>
+        <input type="text" name="username" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" required><br>
+
+        <label for="referralCode">Referral Code (Optional):</label>
+        <input type="text" name="referralCode"><br>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <h1>Login</h1>
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" name="username" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" required><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <script>// Simulated user database (for demonstration purposes)
+        const users = [];
+        
+        // Function to generate a unique referral code (based on username)
+        function generateReferralCode(username) {
+            return btoa(username).substring(0, 6); // A simple encoding (you can make it more complex)
+        }
+        
+        // Registration function with referral code
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the form from submitting normally
+        
+            // Get the input values
+            const username = document.querySelector('#registerForm input[name="username"]').value;
+            const password = document.querySelector('#registerForm input[name="password"]').value;
+            const referralCode = document.querySelector('#registerForm input[name="referralCode"]').value;
+        
+            // Check if the user already exists
+            const userExists = users.some(user => user.username === username);
+            if (userExists) {
+                alert('Username already exists! Please choose a different username.');
+                return;
+            }
+        
+            // Check if the referral code is valid
+            if (referralCode) {
+                const referrer = users.find(user => user.referralCode === referralCode);
+                if (!referrer) {
+                    alert('Invalid referral code.');
+                    return;
+                } else {
+                    alert(`Referred by ${referrer.username}`);
+                    referrer.referrals = referrer.referrals ? referrer.referrals + 1 : 1;
+                }
+            }
+        
+            // Register the new user with their own referral code
+            const newUser = {
+                username,
+                password,
+                referralCode: generateReferralCode(username),
+                referrals: 0, // Number of referrals this user has
+            };
+            users.push(newUser);
+        
+            alert(`Registration successful! Your referral code is: ${newUser.referralCode}`);
+            
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html'; // Change this URL to your actual dashboard page
+        });
+        
+        // Login function
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the form from submitting normally
+        
+            // Get the input values
+            const username = document.querySelector('#loginForm input[name="username"]').value;
+            const password = document.querySelector('#loginForm input[name="password"]').value;
+        
+            // Check for user credentials
+            const user = users.find(user => user.username === username && user.password === password);
+            if (user) {
+                alert(`Login successful! Your referral code is: ${user.referralCode}`);
+                
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html'; // Change this URL to your actual dashboard page
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+        });
+        </script> <!-- Link your JavaScript file here -->
+</body>
+</html>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+}
+
+.form-box {
+    position: relative;
+}
+
+.input-group {
+    display: none;
+    margin-top: 20px;
+}
+
+.input-group.active {
+    display: block;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.button-box {
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    color: white;
+    border-radius: 5px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+/* General Styles for Larger Screens (Desktop and Tablet) */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar ul {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+}
+
+.navbar ul li {
+    list-style: none;
+}
+
+.navbar ul li a {
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: #007bff;
+    border-radius: 5px;
+}
+
+/* MEDIA QUERY FOR MOBILE SCREENS */
+@media (max-width: 768px) {
+    /* Navbar adjustments for mobile */
+    .navbar ul {
+        flex-direction: column; /* Stack items vertically */
+        text-align: center;
+        padding: 0;
+    }
+
+    .navbar ul li {
+        margin: 10px 0;
+    }
+
+    .navbar ul li a {
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+
+    /* General body padding */
+    body {
+        padding: 10px;
+    }
+
+    /* Make content full-width on smaller screens */
+    .about-container,
+    .plans-container,
+    .dashboard-container,
+    .contact-container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    /* Adjust form fields */
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+    /* Button adjustments */
+    button {
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+    }
+}
+
+/* Additional media queries for very small screens (like iPhone SE) */
+@media (max-width: 576px) {
+    .navbar ul {
+        padding: 0;
+        text-align: left; /* Align text left for very small screens */
+    }
+
+    .navbar ul li a {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    /* Further reduce font size for smaller screens */
+    body {
+        font-size: 14px;
+    }
+
+    /* Smaller inputs */
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    textarea {
+        padding: 8px;
+    }
+
+    /* Reduce button size */
+    button {
+        padding: 8px;
+        font-size: 16px;
+    }
+}
+
+</style>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binvestors - Deposit</title>
+    <link rel="stylesheet" href="style.css"> <!-- Ensure this path is correct -->
+</head>
+<body>
+    <div class="navbar">
+        <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="plans.html">Plans</a></li>
+            <li><a href="deposite.html">Deposit</a></li>
+            <li><a href="withdrawl.html">Withdrawal</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </div>
+
+    <div class="deposit-container">
+        <h1>Deposit Funds</h1>
+        <h2>Choose Payment Method</h2>
+        <form id="depositForm">
+            <label for="paymentMethod">Payment Method:</label>
+            <select id="paymentMethod" required>
+                <option value="easypaisa">Easypaisa</option>
+                <!-- Add other payment methods if needed -->
+            </select>
+
+            <div class="easypaisa-info">
+                <h3>Easypaisa Information</h3>
+                <p><strong>Name:</strong> Mudassir Shah</p>
+                <p><strong>Number:</strong> 03105382417</p>
+            </div>
+
+            <h2>Transaction Details</h2>
+            <label for="sendingAmount">Amount Sent (PKR):</label>
+            <input type="number" id="sendingAmount" placeholder="Enter amount sent" required>
+
+            <label for="senderName">Your Easypaisa Name:</label>
+            <input type="text" id="senderName" placeholder="Enter your Easypaisa name" required>
+
+            <label for="senderNumber">Your Easypaisa Number:</label>
+            <input type="text" id="senderNumber" placeholder="Enter your Easypaisa number" required>
+
+            <label for="trxId">Transaction ID (TRX ID):</label>
+            <input type="text" id="trxId" placeholder="Enter TRX ID" required>
+
+            <label for="receipt">Upload Transaction Receipt:</label>
+            <input type="file" id="receipt" accept="image/*" required>
+
+            <button type="submit">Submit Deposit</button>
+        </form>
+    </div>
+    <div class="deposit-history-container">
+        <h1>Deposit History</h1>
+        <table id="depositHistory">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Easypaisa Name</th>
+                    <th>Easypaisa Number</th>
+                    <th>Amount (PKR)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Deposit history will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>document.getElementById('depositForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+    
+        // Here, you can handle form submission (e.g., send data to the server or log it)
+        const amount = document.getElementById('sendingAmount').value;
+        const senderName = document.getElementById('senderName').value;
+        const senderNumber = document.getElementById('senderNumber').value;
+        const trxId = document.getElementById('trxId').value;
+        const receipt = document.getElementById('receipt').files[0];
+    
+        // You can perform actions like sending data to a server here
+    
+        alert(`Deposit submitted:\nAmount: PKR ${amount}\nName: ${senderName}\nNumber: ${senderNumber}\nTRX ID: ${trxId}`);
+    });
+    // Function to update deposit history table
+    function updateDepositHistory() {
+        const depositHistory = JSON.parse(localStorage.getItem('depositHistory')) || [];
+        const tbody = document.querySelector('#depositHistory tbody');
+        tbody.innerHTML = ''; // Clear existing rows
+    
+        depositHistory.forEach(record => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${record.dateTime}</td>
+                <td>${record.easypaisaName}</td>
+                <td>${record.easypaisaNumber}</td>
+                <td>${record.amount}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+    
+    // Call update function on page load
+    updateDepositHistory();
+    document.getElementById('depositForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent form submission
+    
+        // Get form values
+        const easypaisaName = document.getElementById('easypaisaName').value;
+        const easypaisaNumber = document.getElementById('easypaisaNumber').value;
+        const depositAmount = document.getElementById('depositAmount').value;
+    
+        // Create deposit record
+        const depositRecord = {
+            dateTime: new Date().toLocaleString(),
+            easypaisaName: easypaisaName,
+            easypaisaNumber: easypaisaNumber,
+            amount: depositAmount,
+        };
+    
+        // Save deposit record to local storage
+        const depositHistory = JSON.parse(localStorage.getItem('depositHistory')) || [];
+        depositHistory.push(depositRecord);
+        localStorage.setItem('depositHistory', JSON.stringify(depositHistory));
+    
+        // Reset the form
+        document.getElementById('depositForm').reset();
+    
+        // Update deposit history table
+        updateDepositHistory();
+    });
+    
+    </script>
+    <script>
+        document.getElementById('investmentForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+        
+            const userId = document.getElementById('userId').value; // Get user ID
+            const amount = document.getElementById('amount').value;
+            const plan = document.getElementById('plan').value;
+            const dailyPercentage = document.getElementById('dailyPercentage').value;
+            const days = document.getElementById('days').value;
+        
+            const response = await fetch('/api/investments/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId, amount, plan, dailyPercentage, days })
+            });
+        
+            const data = await response.text();
+            alert(data); // Show response message
+        });
+        </script>
+        
+
+</body>
+</html>
+<style>
+    /* Deposit Page Styles */
+/* Navbar styles */
+.navbar {
+    background-color: #007bff; /* Blue background color */
+    padding: 15px; /* Padding around the navbar */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+.navbar ul {
+    list-style-type: none; /* Remove bullet points from list */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    display: flex; /* Use flexbox for horizontal layout */
+    justify-content: center; /* Center the items */
+}
+
+.navbar ul li {
+    margin: 0 20px; /* Spacing between items */
+}
+
+.navbar ul li a {
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Bold text */
+    font-size: 18px; /* Text size */
+    transition: color 0.3s; /* Smooth transition for hover effect */
+}
+
+.navbar ul li a:hover {
+    color: #f4f4f4; /* Lighter color on hover */
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Optional: subtle text glow on hover */
+}
+
+.navbar ul li a.active {
+    border-bottom: 2px solid #f4f4f4; /* Underline for the active link */
+}
+
+.deposit-container {
+    padding: 50px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+h2 {
+    margin-top: 40px;
+    color: #007bff;
+}
+
+label {
+    display: block;
+    margin: 15px 0 5px;
+    font-size: 16px;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+    padding: 10px;
+    width: 300px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+/* General Styles for Larger Screens (Desktop and Tablet) */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar ul {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+}
+
+.navbar ul li {
+    list-style: none;
+}
+
+.navbar ul li a {
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: #007bff;
+    border-radius: 5px;
+}
+
+/* MEDIA QUERY FOR MOBILE SCREENS */
+@media (max-width: 768px) {
+    /* Navbar adjustments for mobile */
+    .navbar ul {
+        flex-direction: column; /* Stack items vertically */
+        text-align: center;
+        padding: 0;
+    }
+
+    .navbar ul li {
+        margin: 10px 0;
+    }
+
+    .navbar ul li a {
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+
+    /* General body padding */
+    body {
+        padding: 10px;
+    }
+
+    /* Make content full-width on smaller screens */
+    .about-container,
+    .plans-container,
+    .dashboard-container,
+    .contact-container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    /* Adjust form fields */
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+    /* Button adjustments */
+    button {
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+    }
+}
+
+/* Additional media queries for very small screens (like iPhone SE) */
+@media (max-width: 576px) {
+    .navbar ul {
+        padding: 0;
+        text-align: left; /* Align text left for very small screens */
+    }
+
+    .navbar ul li a {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    /* Further reduce font size for smaller screens */
+    body {
+        font-size: 14px;
+    }
+
+    /* Smaller inputs */
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    textarea {
+        padding: 8px;
+    }
+
+    /* Reduce button size */
+    button {
+        padding: 8px;
+        font-size: 16px;
+    }
+}
+
+</style>
